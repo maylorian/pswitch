@@ -1,0 +1,6 @@
+#!/bin/sh
+# Focus the hop terminal if it exists, else launch it attached to tmux.
+# Swap alacritty for any terminal that can set a window class
+# (kitty --class hop, foot --app-id hop, ...).
+i3-msg '[class="hop"] focus' 2>/dev/null | grep -q '"success":true' \
+  || alacritty --class hop -e tmux new-session -A -s home &
