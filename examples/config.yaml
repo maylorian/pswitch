@@ -1,0 +1,32 @@
+# hop config: groups of local projects, services and SSH hosts.
+# SSH hosts are read from ~/.ssh/config; tag them there with a comment line
+# above the Host block, e.g.  # hop: group=Work tags=db,prod
+
+groups:
+  - name: Work
+    entries:
+      - project: portal-scraper
+        dir: ~/code/portal-scraper
+        windows:
+          - { name: editor, cmd: nvim }
+          - { name: shell }
+          - { name: logs, cmd: "tail -f logs/app.log" }
+      - service: postgres          # tmux session "db-postgres"
+        dir: ~
+        cmd: "docker compose -f ~/infra/db.yml up"
+      - ssh: prod-db1              # alias from ~/.ssh/config
+      - ssh: "staging-*"           # glob: every matching alias
+        keep_on_exit: true         # show "[exited] r: reconnect" instead of closing
+  - name: Personal
+    entries:
+      - ssh: homelab
+        own_session: true          # its own session instead of a window in ssh-personal
+
+ssh:
+  import_untagged: true            # hosts with no group go to "Ungrouped"
+  session_prefix: ssh-
+  # config: ~/.ssh/config
+  # keep_on_exit: false
+
+# services:
+#   session_prefix: db-
